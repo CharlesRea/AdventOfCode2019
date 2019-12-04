@@ -9,6 +9,7 @@
     <None Include="1.fsx" />
     <None Include="2.fsx" />
     <None Include="3.fsx" />
+    <None Include="4.fsx" />
     <Content Include="3_input.txt" />
     <Content Include="1_input.txt" />
     <Content Include="2_input.txt" />

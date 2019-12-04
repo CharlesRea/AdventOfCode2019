@@ -1,6 +1,5 @@
 ﻿open System
 open System.IO
-open System.Linq
 
 let (|PathDirection|_|) (direction:string) (path:string) =
     if path.StartsWith(direction) then
