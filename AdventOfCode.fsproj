@@ -10,9 +10,12 @@
     <None Include="2.fsx" />
     <None Include="3.fsx" />
     <None Include="4.fsx" />
-    <Content Include="3_input.txt" />
+    <None Include="5_1.fsx" />
+    <None Include="5_2.fsx" />
     <Content Include="1_input.txt" />
     <Content Include="2_input.txt" />
+    <Content Include="3_input.txt" />
+    <Content Include="5_input.txt" />
     <Content Include="Readme.md" />
   </ItemGroup>
 
