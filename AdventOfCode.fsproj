@@ -14,11 +14,14 @@
     <None Include="5_2.fsx" />
     <None Include="6_1.fsx" />
     <None Include="6_2.fsx" />
+    <None Include="8_1.fsx" />
+    <None Include="8_2.fsx" />
     <Content Include="1_input.txt" />
     <Content Include="2_input.txt" />
     <Content Include="3_input.txt" />
     <Content Include="5_input.txt" />
     <Content Include="6_input.txt" />
+    <Content Include="8_input.txt" />
     <Content Include="Readme.md" />
   </ItemGroup>
 
