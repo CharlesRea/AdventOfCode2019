@@ -6,25 +6,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="1.fsx" />
-    <None Include="2.fsx" />
-    <None Include="3.fsx" />
-    <None Include="4.fsx" />
-    <None Include="5_1.fsx" />
-    <None Include="5_2.fsx" />
-    <None Include="6_1.fsx" />
-    <None Include="6_2.fsx" />
-    <None Include="7_1.fsx" />
-    <None Include="8_1.fsx" />
-    <None Include="8_2.fsx" />
-    <Content Include="1_input.txt" />
-    <Content Include="2_input.txt" />
-    <Content Include="3_input.txt" />
-    <Content Include="5_input.txt" />
-    <Content Include="6_input.txt" />
-    <Content Include="7_input.txt" />
-    <Content Include="8_input.txt" />
+    <None Include="1\1.fsx" />
+    <Content Include="1\1_input.txt" />
     <Content Include="Readme.md" />
+    <None Include="2\2.fsx" />
+    <Content Include="2\2_input.txt" />
+    <None Include="3\3.fsx" />
+    <Content Include="3\3_input.txt" />
+    <None Include="4\4.fsx" />
+    <None Include="5\5_2.fsx" />
+    <None Include="5\5_1.fsx" />
+    <Content Include="5\5_input.txt" />
+    <None Include="6\6_1.fsx" />
+    <None Include="6\6_2.fsx" />
+    <Content Include="6\6_input.txt" />
+    <Content Include="7\7_input.txt" />
+    <None Include="7\7_1.fsx" />
+    <None Include="8\8_1.fsx" />
+    <None Include="8\8_2.fsx" />
+    <Content Include="8\8_input.txt" />
   </ItemGroup>
 
 </Project>
