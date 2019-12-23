@@ -22,6 +22,7 @@
     <Content Include="6\6_input.txt" />
     <Content Include="7\7_input.txt" />
     <None Include="7\7_1.fsx" />
+    <Compile Include="7\IntCode.fs" />
     <None Include="8\8_1.fsx" />
     <None Include="8\8_2.fsx" />
     <Content Include="8\8_input.txt" />
