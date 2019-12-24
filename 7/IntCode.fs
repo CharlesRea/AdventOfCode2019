@@ -42,28 +42,32 @@ let private parseOpCode x: OpCode =
 
 type Program = Map<int, int>
 
-type IntCodeState = {
+type IntCodeComputer = {
     program: Program
     position: int
     inputs: int seq
+    outputs: int seq
 }
+
+let initialiseIntCodeComputer (program: Program) (inputs: int seq): IntCodeComputer =
+    { program = program; position = 0; inputs = inputs; outputs = [] }
 
 let parseIntCodeProgram (program: string): Program =
     program.Split(',') |> Seq.map int |> Seq.indexed |> Map.ofSeq
 
-let private getParam (state: IntCodeState) (offset: int) (mode: ParamMode): int =
+let private getParam (state: IntCodeComputer) (offset: int) (mode: ParamMode): int =
     let { program = program; position = position; } = state
     let index = position + offset
     match mode with
     | Position -> state.program.[program.[index]]
     | Immediate -> state.program.[index]
 
-let private updateProgram (state: IntCodeState) (outputParamOffset: int) (newValue: int): Program =
+let private updateProgram (state: IntCodeComputer) (outputParamOffset: int) (newValue: int): Program =
     let outputIndex = state.program.[state.position + outputParamOffset]
     if debug then printf "-- Updating %d to %d\r\n" outputIndex newValue
     state.program |> Map.add outputIndex newValue
 
-let rec runIntCodeComputer (state: IntCodeState): state: IntCodeState * output: int option =
+let rec runIntCodeComputer (state: IntCodeComputer): state: IntCodeComputer * output: int option =
     let { program = program; position = position; inputs = inputs } = state
 
     if debug then printf "\r\nIndex: %d\tOpcode: %d \t%A\tArguments: %A\r\n" position program.[position] (parseOpCode program.[position]) (program.[position + 1], program.[position + 2], program.[position + 3])
@@ -94,7 +98,7 @@ let rec runIntCodeComputer (state: IntCodeState): state: IntCodeState * output: 
 
     | Output(paramMode) ->
         let outputValue = getParam state 1 paramMode
-        ({ state with position = position + 2 }, Some outputValue)
+        ({ state with position = position + 2; outputs = Seq.append state.outputs [outputValue] }, Some outputValue)
 
     | JumpIfTrue(xMode, yMode) ->
         let value = getParam state 1 xMode

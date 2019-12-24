@@ -7,7 +7,7 @@ let program = File.ReadAllText("./7_input.txt") |> parseIntCodeProgram
 
 let runAmplifier  (input: int) (phaseSetting: int): int =
     let inputs = [| phaseSetting; input; |]
-    let (_, output) = runIntCodeComputer { program = program; position = 0; inputs = inputs; }
+    let (_, output) = runIntCodeComputer (initialiseIntCodeComputer program inputs)
     match output with
     | Some(output) -> output
     | None -> failwith "No output from program"
