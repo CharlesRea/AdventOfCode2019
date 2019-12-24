@@ -55,7 +55,7 @@ let initialiseIntCodeComputer (program: Program) (inputs: int seq): IntCodeCompu
 let parseIntCodeProgram (program: string): Program =
     program.Split(',') |> Seq.map int |> Seq.indexed |> Map.ofSeq
 
-let private getParam (state: IntCodeComputer) (offset: int) (mode: ParamMode): int =
+let private getParamValue (state: IntCodeComputer) (offset: int) (mode: ParamMode): int =
     let { program = program; position = position; } = state
     let index = position + offset
     match mode with
@@ -74,16 +74,16 @@ let rec runIntCodeComputer (state: IntCodeComputer): state: IntCodeComputer * ou
 
     match parseOpCode program.[position] with
     | Add(xMode, yMode) ->
-        let x = getParam state 1 xMode
-        let y = getParam state 2 yMode
+        let x = getParamValue state 1 xMode
+        let y = getParamValue state 2 yMode
         runIntCodeComputer
             { state with
                 program = updateProgram state 3 (x + y)
                 position = position + 4 }
 
     | Multiply(xMode, yMode) ->
-        let x = getParam state 1 xMode
-        let y = getParam state 2 yMode
+        let x = getParamValue state 1 xMode
+        let y = getParamValue state 2 yMode
         runIntCodeComputer
             { state with
                 program = updateProgram state 3 (x * y)
@@ -97,34 +97,34 @@ let rec runIntCodeComputer (state: IntCodeComputer): state: IntCodeComputer * ou
                 inputs = Seq.tail inputs }
 
     | Output(paramMode) ->
-        let outputValue = getParam state 1 paramMode
+        let outputValue = getParamValue state 1 paramMode
         ({ state with position = position + 2; outputs = Seq.append state.outputs [outputValue] }, Some outputValue)
 
     | JumpIfTrue(xMode, yMode) ->
-        let value = getParam state 1 xMode
-        let jumpTo = getParam state 2 yMode
+        let value = getParamValue state 1 xMode
+        let jumpTo = getParamValue state 2 yMode
         runIntCodeComputer
             { state with
                 position = (if value <> 0 then jumpTo else position + 3) }
 
     | JumpIfFalse(xMode, yMode) ->
-        let value = getParam state 1 xMode
-        let jumpTo = getParam state 2 yMode
+        let value = getParamValue state 1 xMode
+        let jumpTo = getParamValue state 2 yMode
         runIntCodeComputer
             { state with
                 position = (if value = 0 then jumpTo else position + 3) }
 
     | LessThan(xMode, yMode) ->
-        let x = getParam state 1 xMode
-        let y = getParam state 2 yMode
+        let x = getParamValue state 1 xMode
+        let y = getParamValue state 2 yMode
         runIntCodeComputer
             { state with
                 program = updateProgram state 3 (if x < y then 1 else 0)
                 position = position + 4 }
 
     | Equals(xMode, yMode) ->
-        let x = getParam state 1 xMode
-        let y = getParam state 2 yMode
+        let x = getParamValue state 1 xMode
+        let y = getParamValue state 2 yMode
         runIntCodeComputer
             { state with
                 program = updateProgram state 3 (if x = y then 1 else 0)
