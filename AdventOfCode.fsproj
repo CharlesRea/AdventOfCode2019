@@ -34,6 +34,10 @@
     <None Include="10\10_1.fsx" />
     <None Include="10\10_2.fsx" />
     <Content Include="10\input.txt" />
+    <Content Include="11\input.txt" />
+    <Compile Include="11\IntCode.fs" />
+    <None Include="11\11_1.fsx" />
+    <None Include="11\11_2.fsx" />
   </ItemGroup>
 
 </Project>
