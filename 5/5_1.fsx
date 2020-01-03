@@ -1,8 +1,13 @@
 open System.IO
 
-let initialProgram = File.ReadAllText("./5_input.txt").Split(',') |> Seq.map int |> Seq.toArray
+let initialProgram =
+    File.ReadAllText("./5_input.txt").Split(',')
+    |> Seq.map int
+    |> Seq.toArray
 
-type ParamMode = | Immediate | Position
+type ParamMode =
+    | Immediate
+    | Position
 
 type OpCode =
     | Add of xMode: ParamMode * yMode: ParamMode
@@ -12,7 +17,9 @@ type OpCode =
     | Halt
 
 let getDigits x =
-    x |> string |> Seq.map (fun c -> int c - int '0')
+    x
+    |> string
+    |> Seq.map (fun c -> int c - int '0')
 
 let getParamMode x =
     match x with
@@ -24,7 +31,11 @@ let getParamModes xs =
     xs |> List.map getParamMode
 
 let parseOpCode x: OpCode =
-    let digits = (string x).PadLeft(5, '0') |> getDigits |> Seq.toList |> List.rev
+    let digits =
+        (string x).PadLeft(5, '0')
+        |> getDigits
+        |> Seq.toList
+        |> List.rev
 
     match digits with
     | 1 :: 0 :: x :: y :: 0 :: [] -> Add(getParamMode x, getParamMode y)

@@ -1,8 +1,13 @@
 open System.IO
 
-let initialProgram = File.ReadAllText("./5_input.txt").Split(',') |> Seq.map int |> Seq.toArray
+let initialProgram =
+    File.ReadAllText("./5_input.txt").Split(',')
+    |> Seq.map int
+    |> Seq.toArray
 
-type ParamMode = | Immediate | Position
+type ParamMode =
+    | Immediate
+    | Position
 
 type OpCode =
     | Add of xMode: ParamMode * yMode: ParamMode
@@ -16,7 +21,9 @@ type OpCode =
     | Halt
 
 let getDigits x =
-    x |> string |> Seq.map (fun c -> int c - int '0')
+    x
+    |> string
+    |> Seq.map (fun c -> int c - int '0')
 
 let getParamMode x =
     match x with
@@ -28,7 +35,11 @@ let getParamModes xs =
     xs |> List.map getParamMode
 
 let parseOpCode x: OpCode =
-    let digits = (string x).PadLeft(5, '0') |> getDigits |> Seq.toList |> List.rev
+    let digits =
+        (string x).PadLeft(5, '0')
+        |> getDigits
+        |> Seq.toList
+        |> List.rev
 
     match digits with
     | 1 :: 0 :: x :: y :: 0 :: [] -> Add(getParamMode x, getParamMode y)
@@ -77,20 +88,28 @@ let rec runStep (program: array<int>) (index: int) =
     | JumpIfTrue(xMode, yMode) ->
         let x = getParamValue program program.[index + 1] xMode
         let y = getParamValue program program.[index + 2] yMode
-        runStep program (if x <> 0 then y else index + 3)
+        runStep program
+            (if x <> 0 then y
+             else index + 3)
     | JumpIfFalse(xMode, yMode) ->
         let x = getParamValue program program.[index + 1] xMode
         let y = getParamValue program program.[index + 2] yMode
-        runStep program (if x = 0 then y else index + 3)
+        runStep program
+            (if x = 0 then y
+             else index + 3)
     | LessThan(xMode, yMode) ->
         let x = getParamValue program program.[index + 1] xMode
         let y = getParamValue program program.[index + 2] yMode
-        Array.set program program.[index + 3] (if x < y then 1 else 0)
+        Array.set program program.[index + 3]
+            (if x < y then 1
+             else 0)
         runStep program (index + 4)
     | Equals(xMode, yMode) ->
         let x = getParamValue program program.[index + 1] xMode
         let y = getParamValue program program.[index + 2] yMode
-        Array.set program program.[index + 3] (if x = y then 1 else 0)
+        Array.set program program.[index + 3]
+            (if x = y then 1
+             else 0)
         runStep program (index + 4)
     | Halt -> ()
 

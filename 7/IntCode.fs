@@ -2,7 +2,9 @@ module IntCode
 
 let debug = false
 
-type ParamMode = | Immediate | Position
+type ParamMode =
+    | Immediate
+    | Position
 
 let private getParamMode x =
     match x with
@@ -25,7 +27,11 @@ let private getDigits (x: string): int seq =
     x |> Seq.map (fun c -> int c - int '0')
 
 let private parseOpCode x: OpCode =
-    let digits = (string x).PadLeft(5, '0') |> getDigits |> Seq.toList |> List.rev
+    let digits =
+        (string x).PadLeft(5, '0')
+        |> getDigits
+        |> Seq.toList
+        |> List.rev
 
     match digits with
     | 1 :: 0 :: x :: y :: 0 :: [] -> Add(getParamMode x, getParamMode y)
@@ -42,21 +48,26 @@ let private parseOpCode x: OpCode =
 
 type Program = Map<int, int>
 
-type IntCodeComputer = {
-    program: Program
-    position: int
-    inputs: int seq
-    outputs: int seq
-}
+type IntCodeComputer =
+    { program: Program
+      position: int
+      inputs: int seq
+      outputs: int seq }
 
 let initialiseIntCodeComputer (program: Program) (inputs: int seq): IntCodeComputer =
-    { program = program; position = 0; inputs = inputs; outputs = [] }
+    { program = program
+      position = 0
+      inputs = inputs
+      outputs = [] }
 
 let parseIntCodeProgram (program: string): Program =
-    program.Split(',') |> Seq.map int |> Seq.indexed |> Map.ofSeq
+    program.Split(',')
+    |> Seq.map int
+    |> Seq.indexed
+    |> Map.ofSeq
 
 let private getParamValue (state: IntCodeComputer) (offset: int) (mode: ParamMode): int =
-    let { program = program; position = position; } = state
+    let { program = program; position = position } = state
     let index = position + offset
     match mode with
     | Position -> state.program.[program.[index]]
@@ -64,13 +75,16 @@ let private getParamValue (state: IntCodeComputer) (offset: int) (mode: ParamMod
 
 let private updateProgram (state: IntCodeComputer) (outputParamOffset: int) (newValue: int): Program =
     let outputIndex = state.program.[state.position + outputParamOffset]
-    if debug then printf "-- Updating %d to %d\r\n" outputIndex newValue
+    if debug then
+        printf "-- Updating %d to %d\r\n" outputIndex newValue
     state.program |> Map.add outputIndex newValue
 
-let rec runIntCodeComputer (state: IntCodeComputer): state: IntCodeComputer * output: int option =
+let rec runIntCodeComputer (state: IntCodeComputer): IntCodeComputer * int option =
     let { program = program; position = position; inputs = inputs } = state
 
-    if debug then printf "\r\nIndex: %d\tOpcode: %d \t%A\tArguments: %A\r\n" position program.[position] (parseOpCode program.[position]) (program.[position + 1], program.[position + 2], program.[position + 3])
+    if debug then
+        printf "\r\nIndex: %d\tOpcode: %d \t%A\tArguments: %A\r\n" position program.[position]
+            (parseOpCode program.[position]) (program.[position + 1], program.[position + 2], program.[position + 3])
 
     match parseOpCode program.[position] with
     | Add(xMode, yMode) ->
@@ -78,56 +92,68 @@ let rec runIntCodeComputer (state: IntCodeComputer): state: IntCodeComputer * ou
         let y = getParamValue state 2 yMode
         runIntCodeComputer
             { state with
-                program = updateProgram state 3 (x + y)
-                position = position + 4 }
+                  program = updateProgram state 3 (x + y)
+                  position = position + 4 }
 
     | Multiply(xMode, yMode) ->
         let x = getParamValue state 1 xMode
         let y = getParamValue state 2 yMode
         runIntCodeComputer
             { state with
-                program = updateProgram state 3 (x * y)
-                position = position + 4 }
+                  program = updateProgram state 3 (x * y)
+                  position = position + 4 }
 
     | Input ->
         runIntCodeComputer
             { state with
-                program = updateProgram state 1 (Seq.head inputs)
-                position = position + 2
-                inputs = Seq.tail inputs }
+                  program = updateProgram state 1 (Seq.head inputs)
+                  position = position + 2
+                  inputs = Seq.tail inputs }
 
     | Output(paramMode) ->
         let outputValue = getParamValue state 1 paramMode
-        ({ state with position = position + 2; outputs = Seq.append state.outputs [outputValue] }, Some outputValue)
+        ({ state with
+               position = position + 2
+               outputs = Seq.append state.outputs [ outputValue ] }, Some outputValue)
 
     | JumpIfTrue(xMode, yMode) ->
         let value = getParamValue state 1 xMode
         let jumpTo = getParamValue state 2 yMode
         runIntCodeComputer
             { state with
-                position = (if value <> 0 then jumpTo else position + 3) }
+                  position =
+                      (if value <> 0 then jumpTo
+                       else position + 3) }
 
     | JumpIfFalse(xMode, yMode) ->
         let value = getParamValue state 1 xMode
         let jumpTo = getParamValue state 2 yMode
         runIntCodeComputer
             { state with
-                position = (if value = 0 then jumpTo else position + 3) }
+                  position =
+                      (if value = 0 then jumpTo
+                       else position + 3) }
 
     | LessThan(xMode, yMode) ->
         let x = getParamValue state 1 xMode
         let y = getParamValue state 2 yMode
         runIntCodeComputer
             { state with
-                program = updateProgram state 3 (if x < y then 1 else 0)
-                position = position + 4 }
+                  program =
+                      updateProgram state 3
+                          (if x < y then 1
+                           else 0)
+                  position = position + 4 }
 
     | Equals(xMode, yMode) ->
         let x = getParamValue state 1 xMode
         let y = getParamValue state 2 yMode
         runIntCodeComputer
             { state with
-                program = updateProgram state 3 (if x = y then 1 else 0)
-                position = position + 4 }
+                  program =
+                      updateProgram state 3
+                          (if x = y then 1
+                           else 0)
+                  position = position + 4 }
 
     | Halt -> (state, None)

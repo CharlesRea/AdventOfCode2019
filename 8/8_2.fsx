@@ -11,7 +11,10 @@ let data = File.ReadAllText("./8_input.txt") |> digits
 
 let layers = Seq.chunkBySize layerSize data
 
-type Colour =  Black | White | Transparent
+type Colour =
+    | Black
+    | White
+    | Transparent
 
 let getColour pixel =
     match pixel with
@@ -33,9 +36,10 @@ let formatColour colour =
     | White -> "#"
     | Transparent -> " "
 
-for y in 0..height - 1 do
-    let row = seq { 0 .. width - 1 }
-              |> Seq.map (fun x -> getDisplayedColour x y)
-              |> Seq.map formatColour
-              |> String.concat ""
+for y in 0 .. height - 1 do
+    let row =
+        seq { 0 .. width - 1 }
+        |> Seq.map (fun x -> getDisplayedColour x y)
+        |> Seq.map formatColour
+        |> String.concat ""
     printf "%s\r\n" row

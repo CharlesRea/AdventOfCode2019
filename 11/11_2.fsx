@@ -7,18 +7,29 @@ let program = File.ReadAllText("./input.txt") |> parseIntCodeProgram
 
 let paintedCoordinates = Map.empty
 
-type Direction = Up | Right | Down | Left
-type RotationDirection = TurnLeft | TurnRight
-type Colour = Black | White
+type Direction =
+    | Up
+    | Right
+    | Down
+    | Left
 
-type Robot = {
-    direction: Direction
-    position: int * int
-    paintedCoordinates: Map<int * int, Colour>
-}
+type RotationDirection =
+    | TurnLeft
+    | TurnRight
+
+type Colour =
+    | Black
+    | White
+
+type Robot =
+    { direction: Direction
+      position: int * int
+      paintedCoordinates: Map<int * int, Colour> }
 
 let currentColour (robot: Robot): Colour =
-    robot.paintedCoordinates |> Map.tryFind robot.position |> Option.defaultValue Black
+    robot.paintedCoordinates
+    |> Map.tryFind robot.position
+    |> Option.defaultValue Black
 
 let colourToInput (colour: Colour) =
     match colour with
@@ -58,7 +69,11 @@ let move (x, y) (direction: Direction) =
 
 let runRobot: Robot =
     let rec runStep (robot: Robot) (program: IntCodeComputer): Robot =
-        let inputValue = robot |> currentColour |> colourToInput
+        let inputValue =
+            robot
+            |> currentColour
+            |> colourToInput
+
         let programWithInputs = { program with inputs = Seq.initInfinite (fun _ -> inputValue) }
 
         let (newProgram, colourOutput) = runIntCodeComputer programWithInputs
@@ -72,34 +87,59 @@ let runRobot: Robot =
             let (finalProgram, directionOutput) = runIntCodeComputer newProgram
 
             match directionOutput with
-                | None -> { robot with paintedCoordinates = paintedCoordinates }
+            | None -> { robot with paintedCoordinates = paintedCoordinates }
 
-                | Some directionOutput ->
-                    let direction = outputToDirection directionOutput robot.direction
+            | Some directionOutput ->
+                let direction = outputToDirection directionOutput robot.direction
 
-                    let newRobot = {
-                        paintedCoordinates = robot.paintedCoordinates |> Map.add robot.position colourToPaint
-                        direction = direction
-                        position = move robot.position direction
-                    }
-                    runStep newRobot finalProgram
+                let newRobot =
+                    { paintedCoordinates = robot.paintedCoordinates |> Map.add robot.position colourToPaint
+                      direction = direction
+                      position = move robot.position direction }
+                runStep newRobot finalProgram
 
     let initialComputer = initialiseIntCodeComputer program Seq.empty
-    let initialRobot = { paintedCoordinates = Map.empty.Add((0,0), White); direction = Up; position = (0, 0) }
+
+    let initialRobot =
+        { paintedCoordinates = Map.empty.Add((0, 0), White)
+          direction = Up
+          position = (0, 0) }
     runStep initialRobot initialComputer
 
 let robot = runRobot
 
 let printRobot (robot: Robot) =
-    let coordinates = robot.paintedCoordinates |> Map.toList |> List.map fst
-    let minX = coordinates |> List.map fst |> List.min
-    let maxX = coordinates |> List.map fst |> List.max
-    let minY = coordinates |> List.map snd |> List.min
-    let maxY = coordinates |> List.map snd |> List.max
+    let coordinates =
+        robot.paintedCoordinates
+        |> Map.toList
+        |> List.map fst
+
+    let minX =
+        coordinates
+        |> List.map fst
+        |> List.min
+
+    let maxX =
+        coordinates
+        |> List.map fst
+        |> List.max
+
+    let minY =
+        coordinates
+        |> List.map snd
+        |> List.min
+
+    let maxY =
+        coordinates
+        |> List.map snd
+        |> List.max
 
     for y in seq { maxY .. -1 .. minY } do
         for x in seq { minX .. maxX } do
-            let colour = robot.paintedCoordinates |> Map.tryFind (x, y) |> Option.defaultValue Black
+            let colour =
+                robot.paintedCoordinates
+                |> Map.tryFind (x, y)
+                |> Option.defaultValue Black
             match colour with
             | Black -> printf "."
             | White -> printf "#"
