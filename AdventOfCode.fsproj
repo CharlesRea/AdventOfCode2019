@@ -38,6 +38,8 @@
     <Compile Include="11\IntCode.fs" />
     <None Include="11\11_1.fsx" />
     <None Include="11\11_2.fsx" />
+    <None Include="12\12_1.fsx" />
+    <None Include="12\12_2.fsx" />
   </ItemGroup>
 
 </Project>
